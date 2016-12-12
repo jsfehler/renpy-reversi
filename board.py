@@ -1,4 +1,5 @@
 import copy
+from itertools import product
 
 from piece import Piece
 
@@ -30,7 +31,8 @@ class BoardController(object):
         # NORTHWEST,
     ]
 
-    def __init__(self, board_width=0, board_height=0):
+    def __init__(self, map=None, board_width=0, board_height=0):
+        self.map = map
         self.height = board_height
         self.width = board_width
 
@@ -39,10 +41,22 @@ class BoardController(object):
 
     def _build_board(self):
         clean_board = []
-        clean_row = [0 for _ in range(self.width)]
+        
+        if self.map is not None:
+            for x, y in product(range(self.height), range(self.width)):
+                location = (self.width * y) + x
+                if self.map[location] == "0":
+                    clean_board.append(0)
+                elif self.map[location] == "1":
+                    clean_board.append(1)
+        
+            clean_board = [clean_board[i:i + self.width] for i in xrange(0, len(clean_board), self.width)]
+        
+        else:
+            clean_row = [0 for _ in range(self.width)]
 
-        for y in range(self.height):
-            clean_board.append(copy.deepcopy(clean_row))
+            for y in range(self.height):
+                clean_board.append(copy.deepcopy(clean_row))
 
         return clean_board
 

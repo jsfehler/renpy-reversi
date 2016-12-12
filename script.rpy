@@ -1,5 +1,6 @@
 init python:
     from bisect import bisect_right
+    from itertools import product
     import random
 
     import pygame
@@ -8,8 +9,6 @@ init python:
     from player import Player, Enemy
 
     settings = {
-        "logical_width": 6,
-        "logical_height": 6,
         "stone_size": 64,
     }
 
@@ -44,16 +43,19 @@ init python:
 
 
     class DisplayableBoard(renpy.Displayable):
-        def __init__(self, background, x_stone, x_hover_stone, o_stone, **kwargs):
+        def __init__(self, map, background, x_stone, x_hover_stone, o_stone, **kwargs):
             super(DisplayableBoard, self).__init__(**kwargs)
 
+            self.map = map
+            
             self.board_controller = BoardController(
-                settings["logical_width"],
-                settings["logical_height"]
+                map[0],
+                map[1],
+                map[2]
             )
 
-            self.width = settings["logical_width"]
-            self.height = settings["logical_height"]
+            self.width = map[1]
+            self.height = map[2]
 
             self.board_d = background
 
@@ -79,18 +81,22 @@ init python:
             render = renpy.Render(800, 600)
 
             # Draw board
-            render.place(self.board_d, 0, 0)
+            for y, x in product(range(self.height), range(self.width)):
+                location = (self.width * y) + x
+                if self.map[0][location] == "0":
+                    render.place(self.board_d, self.one_tile_size * x, self.one_tile_size * y)
 
             # Draw stones
             for y in range(self.height):
                 for x in range(self.width):
-                    if self.board_controller.board[x][y] != 0:
-                        if self.board_controller.board[x][y] == 'X':
-                            stone = self.x_stone
-                        elif self.board_controller.board[x][y] == 'O':
-                            stone = self.o_stone
-
-                        render.place(stone, (self.one_tile_size * x), (self.one_tile_size * y))
+                    if self.board_controller.board[x][y] == 'X':
+                        stone = self.x_stone
+                    elif self.board_controller.board[x][y] == 'O':
+                        stone = self.o_stone
+                    else:
+                        continue
+                    
+                    render.place(stone, (self.one_tile_size * x), (self.one_tile_size * y))
 
             # Draw hovering stone
             if player_one.turn:
@@ -151,7 +157,26 @@ init python:
     white_stone = Image("white_stone.png")
     hover_stone = Transform(black_stone, alpha=0.5)
     
+    map_00 = (
+        "000000"
+        "000000"
+        "000000"
+        "000000"
+        "000000"
+        "000000"
+    )
+    
+    map_01 = (
+        "010010"
+        "001100"
+        "000000"
+        "001100"
+        "010010"
+        "000000"
+    )
+    
     board = DisplayableBoard(
+        map=(map_01, 6, 6),
         background=board_bg,
         x_stone=black_stone,
         x_hover_stone=hover_stone,
