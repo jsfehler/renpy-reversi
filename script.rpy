@@ -27,9 +27,10 @@ init python:
     player_one = Player(name="Player", stone_type='X')
     player_two = Enemy(name="CPU", stone_type='O')
 
+    board_background = TileBoard(map=(map_01, 6, 6), background=board_bg)
+
     board = DisplayableBoard(
         map=(map_01, 6, 6),
-        background=board_bg,
         x_stone=black_stone,
         x_hover_stone=hover_stone,
         o_stone=white_stone,
@@ -43,6 +44,10 @@ init python:
 
 
 screen reversi:
+    add board_background:
+        xalign 0.25
+        xpos 400
+
     add board:
         xalign 0.25
         xpos 400
