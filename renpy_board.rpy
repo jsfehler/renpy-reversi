@@ -53,6 +53,7 @@ init -1500 python:
 
             return render
 
+
     class DisplayableBoard(renpy.Displayable):
         def __init__(self, map, x_stone, x_hover_stone, o_stone, player_one,
                      player_two, **kwargs):
@@ -90,34 +91,34 @@ init -1500 python:
             self.c = 0
             self.d = 0
 
+        def get_pointer_position(self):
+            if not self.mouse_x < 0 or self.mouse_y < 0:
+                tile_x, tile_y = self.find_nearest_tile(self.mouse_x, self.mouse_y)
+                if tile_x <= 5 and tile_y <= 5:
+                    if self.board_controller.board[tile_x][tile_y] == 0:
+                        return self.one_tile_size * tile_x, self.one_tile_size * tile_y
+
         def render(self, width, height, st, at):
             render = renpy.Render(800, 600)
 
             # Draw stones
-            for y in range(self.height):
-                for x in range(self.width):
-                    if self.board_controller.board[x][y] == 'X':
-                        stone = self.x_stone
-                    elif self.board_controller.board[x][y] == 'O':
-                        stone = self.o_stone
-                    else:
-                        continue
+            for y, x in product(range(self.height), range(self.width)):
+                if self.board_controller.board[x][y] == 'X':
+                    stone = self.x_stone
+                elif self.board_controller.board[x][y] == 'O':
+                    stone = self.o_stone
+                else:
+                    continue
 
-                    render.place(stone, (self.one_tile_size * x), (self.one_tile_size * y))
+                render.place(stone, (self.one_tile_size * x), (self.one_tile_size * y))
 
             # Draw hovering stone
             if self.p1.turn:
-                # if self.mouse_x >= self.mapping[0] and self.mouse_y >= self.mapping[0]:
-                if not self.mouse_x < 0 or self.mouse_y < 0:
-                    c, d = self.find_nearest_tile(self.mouse_x, self.mouse_y)
-                    if c <= 5 and d <= 5:
-                        if self.board_controller.board[c][d] == 0:
-                            render.place(
-                                self.x_hover_stone,
-                                self.one_tile_size * c,
-                                self.one_tile_size * d
-                            )
+                p = self.get_pointer_position()
+                if p is not None:
+                    render.place(self.x_hover_stone, p[0], p[1])
 
+            # CPU turn
             if self.p2.turn:
                 move = self.p2.get_move(self.board_controller)
 
@@ -125,9 +126,9 @@ init -1500 python:
                 if result:
                     self.p2.score += result
                     renpy.restart_interaction()
-                    renpy.redraw(self, 0)
                     next_turn(self.p1, self.p2)
 
+            renpy.redraw(self, 0)
             return render
 
         def find_nearest_tile(self, x, y):
@@ -157,5 +158,3 @@ init -1500 python:
                             self.p1.score += result
                             renpy.restart_interaction()
                             next_turn(self.p1, self.p2)
-
-                renpy.redraw(self, 0)
