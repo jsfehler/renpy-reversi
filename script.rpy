@@ -40,21 +40,30 @@ init python:
 
     player_one.turn = True
 
-    scoreboard = Scoreboard(player_one, player_two)
-
 
 screen reversi:
-    add board_background:
+
+    frame:
+        background None
         xalign 0.25
         xpos 400
 
-    add board:
-        xalign 0.25
-        xpos 400
+        add board_background
+        add board
     
-    add scoreboard
+    use scoreboard
     
     textbutton "New Game" xalign 0.98 yalign 0.98 action NewReversiGame(board)
+
+
+screen scoreboard:
+    frame:
+        background None
+        ypos 400
+
+        text "{} has {} points. {} has {} points.".format(
+            player_one.name, player_one.score, player_two.name, player_two.score
+        )
 
 label start:
     call screen reversi

@@ -26,26 +26,6 @@ init -1500 python:
             renpy.redraw(self.board, 0)
 
 
-    class Scoreboard(renpy.Displayable):
-        def __init__(self, p1, p2, **kwargs):
-            super(Scoreboard, self).__init__(**kwargs)
-
-            self.p1 = p1
-            self.p2 = p2
-
-        def render(self, width, height, st, at):
-            render = renpy.Render(640, 800)
-
-            scoreboard = "{} has {} points. {} has {} points.".format(
-                self.p1.name, self.p1.score, self.p2.name, self.p2.score
-            )
-
-            render.place(Text(scoreboard), 300, 500)
-
-            renpy.redraw(self, 0)
-
-            return render
-
     class TileBoard(renpy.Displayable):
         def __init__(self, map, background, **kwargs):
             super(TileBoard, self).__init__(**kwargs)
@@ -144,6 +124,7 @@ init -1500 python:
                 result = self.board_controller.try_move((move.x, move.y), self.p2.stone_type)
                 if result:
                     self.p2.score += result
+                    renpy.restart_interaction()
                     renpy.redraw(self, 0)
                     next_turn(self.p1, self.p2)
 
@@ -174,6 +155,7 @@ init -1500 python:
                         )
                         if result:
                             self.p1.score += result
+                            renpy.restart_interaction()
                             next_turn(self.p1, self.p2)
 
                 renpy.redraw(self, 0)
