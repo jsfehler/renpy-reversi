@@ -26,34 +26,6 @@ init -1500 python:
             renpy.redraw(self.board, 0)
 
 
-    class TileBoard(renpy.Displayable):
-        def __init__(self, map, background, **kwargs):
-            super(TileBoard, self).__init__(**kwargs)
-
-            self.map = map[0]
-            self.width = map[1]
-            self.height = map[2]
-
-            self.background_tile = background
-
-            self.one_tile_size = settings["stone_size"]
-
-        def render(self, width, height, st, at):
-            render = renpy.Render(800, 600)
-
-            # Draw board
-            for y, x in product(range(self.height), range(self.width)):
-                location = (self.width * y) + x
-                if self.map[location] == "0":
-                    render.place(
-                        self.background_tile,
-                        self.one_tile_size * x,
-                        self.one_tile_size * y
-                    )
-
-            return render
-
-
     class DisplayableBoard(renpy.Displayable):
         def __init__(self, map, x_stone, x_hover_stone, o_stone, player_one,
                      player_two, **kwargs):
