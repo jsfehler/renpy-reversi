@@ -38,14 +38,14 @@ init python:
     tilemap_01 = (
         "A0AA0A"
         "AA00AA"
-        "AAAAAA"
+        "AAABAA"
         "AA00AA"
         "A0AA0A"
         "AAAAAA"
     )
 
 
-    board_tiles = [Image("board.png")]
+    board_tiles = [Image("board.png"), Image("board_small_crack.png")]
     board_background = TileMap(map=tilemap_01, width=6, height=6, tiles=board_tiles)
 
     board = DisplayableBoard(
