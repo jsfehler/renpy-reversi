@@ -87,3 +87,20 @@ screen scoreboard:
 label start:
     call screen reversi
     return
+
+label cpu_turn:
+    show screen reversi
+
+    python:
+        move = player_two.get_move(board.board_controller)
+
+        result = board.board_controller.try_move(
+            (move.x, move.y),
+            player_two.stone_type
+        )
+        if result:
+            player_two.score += result
+            renpy.restart_interaction()
+            next_turn(player_one, player_two)
+
+    call screen reversi

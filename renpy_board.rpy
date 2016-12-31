@@ -90,16 +90,6 @@ init -1500 python:
                 if p is not None:
                     render.place(self.x_hover_stone, p[0], p[1])
 
-            # CPU turn
-            if self.p2.turn:
-                move = self.p2.get_move(self.board_controller)
-
-                result = self.board_controller.try_move((move.x, move.y), self.p2.stone_type)
-                if result:
-                    self.p2.score += result
-                    renpy.restart_interaction()
-                    next_turn(self.p1, self.p2)
-
             renpy.redraw(self, 0)
             return render
 
@@ -130,3 +120,4 @@ init -1500 python:
                             self.p1.score += result
                             renpy.restart_interaction()
                             next_turn(self.p1, self.p2)
+                            renpy.call("cpu_turn")
